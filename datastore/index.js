@@ -10,17 +10,17 @@ var items = {};
 exports.create = (text, callback) => {
   //define a callback that handles an error and a correct case
   counter.getNextUniqueId((err, id) => {
-    if(err){
-      callback(err)
-    }else{
+    if (err) {
+      callback(err);
+    } else {
       //creats path
       let todoPath = path.join(exports.dataDir, `${id}.txt`);
       //creates file
       fs.writeFile(todoPath, text, (err) => {
         if (err) {
-          callback(err)
-        }else{
-          callback(null, { id, text })
+          callback(err);
+        } else {
+          callback(null, { id, text });
           //console.log('The file has been saved!');
         }
       });
@@ -38,12 +38,12 @@ exports.readAll = (callback) => {
       callback(null, files.map(txtFileName => {
         let id = txtFileName.split('.')[0];
         return {
-          id:id,
-          text:id
-        }
+          id: id,
+          text: id
+        };
       }));
     }
-  })
+  });
 };
 
 exports.readOne = (id, callback) => {
@@ -52,19 +52,12 @@ exports.readOne = (id, callback) => {
     if (err) {
       callback(new Error(`No item with id: ${id}`));
     } else {
-      callback(null, {id,text});
+      callback(null, {id, text});
     }
   });
 };
 
-// exports.update = (id, text, callback) => {
-  //fs.readFile --> (err, text)
-    //if(err) {
-      //do
-    //} else {
-        //fs.writeFile with the goods
-    //}
- exports.update = (id, text, callback) => {
+exports.update = (id, text, callback) => {
 
   fs.readFile(path.join(exports.dataDir, `${id}.txt`), 'utf8', (err) => {
     if (err) {
@@ -74,7 +67,7 @@ exports.readOne = (id, callback) => {
         // if (err) {
         //   callback(err);
         // } else {
-        callback(null, {id,text});
+        callback(null, {id, text});
         // }
       });
     }
@@ -86,16 +79,14 @@ exports.delete = (id, callback) => {
   //think we use unlink here from nodejs
 
   fs.unlink(path.join(exports.dataDir, `${id}.txt`), (err) => {
-    if(err){
+    if (err) {
       callback(err);
-    }else{
-      callback()
+    } else {
+      callback();
     }
-  })
+  });
 
 };
-
-
 
 // Config+Initialization code -- DO NOT MODIFY /////////////////////////////////
 

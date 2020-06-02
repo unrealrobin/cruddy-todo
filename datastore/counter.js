@@ -45,20 +45,20 @@ exports.getNextUniqueId = (callback) => {
   //   writeCounter(fileData + 1, callback);
   // });
 
- readCounter((err , counterNumber) => {
-   if(err){
-    callback(err);
-   }else{
-     counterNumber += 1;
-     writeCounter(counterNumber, (err, counterString) => {
-       if(err){
-         callback(err)
-       }else{
-         callback(null, counterString);
-       }
-     })
-   }
- });
+  readCounter((err, counterNumber) => {
+    if (err) {
+      callback(err);
+    } else {
+      counterNumber += 1;
+      writeCounter(counterNumber, (err, counterString) => {
+        if (err) {
+          callback(err);
+        } else {
+          callback(null, counterString);
+        }
+      });
+    }
+  });
 
 };
 
