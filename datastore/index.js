@@ -3,6 +3,8 @@ const path = require('path');
 const _ = require('underscore');
 const counter = require('./counter');
 
+const Promise = require('bluebird');
+const readFilePromise = Promise.promisify(fs.readFile);
 var items = {};
 
 // Public API - Fix these CRUD functions ///////////////////////////////////////
@@ -30,20 +32,47 @@ exports.create = (text, callback) => {
 
 exports.readAll = (callback) => {
 
+  //asynchronous doesnt wait on any other functions to be completed to be able to finish
   fs.readdir(exports.dataDir, (err, files) => {
     if (err) {
-      callback(err);
-    } else {
-      //console.log(files)
-      callback(null, files.map(txtFileName => {
-        let id = txtFileName.split('.')[0];
+      throw ('error reading data folder');
+    }
+    var data = files.map(file => {
+      var id = path.basename(file, '.txt');
+      var filepath = path.join(exports.dataDir, file);
+      //readFilePromise is actually just fs.readFile but only takes the first argument
+      //then...with the "resolve" 'd data, return an object with the id and text
+      //synchronous function
+      return readFilePromise(filepath).then(fileData => {
         return {
           id: id,
-          text: id
+          text: fileData.toString()
         };
-      }));
-    }
+      });
+    });
+    //the call back is from the actual invocation of readAll somewhere
+    Promise.all(data)
+      .then(items => callback(null, items))
+      .catch(err => callback(err));
   });
+
+
+
+
+  // fs.readdir(exports.dataDir, (err, files) => {
+  //   if (err) {
+  //     callback(err);
+  //   } else {
+  //     //console.log(files)
+  //     callback(null, files.map(txtFileName => {
+  //       let id = txtFileName.split('.')[0];
+  //       return {
+  //         id: id,
+  //         text: id
+  //       };
+  //     }));
+  //   }
+  // });
 };
 
 exports.readOne = (id, callback) => {
